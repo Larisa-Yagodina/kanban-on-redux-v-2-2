@@ -1,25 +1,43 @@
-import logo from './logo.svg';
+import React, {useState} from 'react'
 import './App.css';
+import Column from "./Column";
+import { connect } from 'react-redux';
+import 'bootstrap/dist/css/bootstrap.css'
+import {Container, Row} from "reactstrap";
+import {Button} from "reactstrap";
+import CreateModal from "./CreateModal";
 
-function App() {
-  return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+
+function App(props) {
+
+    const [openCreateModal, setOpenCreateModal] = useState(false)
+
+    return (
+    <Container>
+     <h1> Kanban bord (redux) V2-2 </h1>
+        <hr />
+        <Button onClick={() => setOpenCreateModal(!openCreateModal)} outline color="info"> Create Card </Button>
+        {openCreateModal &&
+          <CreateModal setOpenCreateModal={setOpenCreateModal} openCreateModal={openCreateModal}/>
+        }
+
+        <hr />
+         <Row>
+        {props.columns.map(el => <Column column={el} key={el}/> )}
+         </Row>
+    </Container>
   );
 }
 
-export default App;
+
+
+const mapStateToProps = (state) => ({
+    tasks: state.tasks,
+    columns: state.statuses,
+});
+
+const mapDispatchToProps = (dispatch) => ({
+    createCard: (todo) => dispatch({ type: 'TODO_ADD', payload: todo })
+});
+
+export default connect(mapStateToProps, mapDispatchToProps)(App);
